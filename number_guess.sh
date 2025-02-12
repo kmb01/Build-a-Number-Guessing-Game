@@ -10,19 +10,18 @@ then
 
 
 GET_RESULT_USER=$($PSQL "select name, games_played, best_game from users where name = '$USERNAME'")
-IFS='| $' read -r NAME GAMES_PLAYED BEST_GAME <<< "$GET_RESULT_USER"
+
 
   if [[ ! -z $GET_RESULT_USER ]]
   then
-  
+		IFS='| $' read -r NAME GAMES_PLAYED BEST_GAME <<< "$GET_RESULT_USER"
 	  echo "Welcome back, $NAME! You have played $GAMES_PLAYED games, and your best game took $BEST_GAME guesses."
-		PLAYED_COUNTER=$GAMES_PLAYED
+		
 
   else
   echo "Welcome, $USERNAME! It looks like this is your first time here."
   CREATE_USER=$($PSQL "insert into users(name) values('$USERNAME')")
 
-	PLAYED_COUNTER=0
   fi
 
 GET_RESULT_NEW=$($PSQL "select games_played, best_game from users where name = '$USERNAME'")
@@ -33,7 +32,7 @@ SECRET_NUMBER=$(( ( RANDOM % 1000 )  + 1 ))
 echo -e "\nGuess the secret number between 1 and 1000:"
 
 NUMBER_OF_GUESSES=0
-((PLAYED_COUNTER++))
+((NEW_PLAYED++))
 while true
 do
 ((NUMBER_OF_GUESSES++))
@@ -63,9 +62,9 @@ INPUT=$(echo "$INPUT" | sed 's/^0*//')
 		
 		if (( $NEW_BEST > $FINAL_GUESS || $NEW_BEST == 0))
 		then
-		UPDATE_GAMES=$($PSQL "update users set games_played = $PLAYED_COUNTER, best_game = $FINAL_GUESS where name='$USERNAME'")
+		UPDATE_GAMES=$($PSQL "update users set games_played = $NEW_PLAYED, best_game = $FINAL_GUESS where name='$USERNAME'")
 		else
-		UPDATE_GAMES=$($PSQL "update users set games_played = $PLAYED_COUNTER where name='$USERNAME'")
+		UPDATE_GAMES=$($PSQL "update users set games_played = $NEW_PLAYED where name='$USERNAME'")
 		fi
 		break
 	fi
