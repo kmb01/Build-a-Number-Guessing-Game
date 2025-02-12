@@ -5,7 +5,7 @@ PSQL="psql --username=freecodecamp --dbname=number_guess --tuples-only -c"
 echo "Enter you username:"
 read USERNAME
 
-if [[ ${#USERNAME} -lt 22 ]]
+if [[ ${#USERNAME} -lt 23 ]]
 then
 
 
